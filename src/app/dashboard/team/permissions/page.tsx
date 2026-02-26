@@ -33,7 +33,7 @@ export default function PermissionsPage() {
   useEffect(() => {
     const fetchPermissions = async () => {
       try {
-        const res = await fetch("http://localhost:3003/team/permissions")
+        const res = await fetch("https://consoleapis-qqtlx.ondigitalocean.app/team/permissions")
         if (!res.ok) throw new Error("Failed to fetch permissions")
         const data = await res.json()
         setPermissions(data)

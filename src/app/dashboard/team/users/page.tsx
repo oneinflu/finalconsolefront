@@ -38,7 +38,7 @@ export default function UsersPage() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const res = await fetch("http://localhost:3003/team/users")
+        const res = await fetch("https://consoleapis-qqtlx.ondigitalocean.app/team/users")
         if (!res.ok) throw new Error("Failed to fetch users")
         const data = await res.json()
         setUsers(data)

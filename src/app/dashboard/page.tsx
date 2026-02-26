@@ -95,14 +95,14 @@ export default function DashboardPage() {
         }
 
         // Fetch Stats
-        const statsRes = await fetch(`http://localhost:3003/dashboard/stats${queryParams}`)
+        const statsRes = await fetch(`https://consoleapis-qqtlx.ondigitalocean.app/dashboard/stats${queryParams}`)
         if (statsRes.ok) {
           const statsData = await statsRes.json()
           setStats(statsData)
         }
 
         // Fetch Recent Blogs (using queryParams for role filtering)
-        const blogsRes = await fetch(`http://localhost:3003/dashboard/recent-blogs${queryParams}`)
+        const blogsRes = await fetch(`https://consoleapis-qqtlx.ondigitalocean.app/dashboard/recent-blogs${queryParams}`)
         if (blogsRes.ok) {
           const blogsData = await blogsRes.json()
           setRecentBlogs(blogsData)

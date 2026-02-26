@@ -32,7 +32,7 @@ export default function ViewBlogPage() {
 
   const fetchBlogData = async (blogId: string) => {
     try {
-      const res = await fetch(`http://localhost:3003/blogs/${blogId}`)
+      const res = await fetch(`https://consoleapis-qqtlx.ondigitalocean.app/blogs/${blogId}`)
       if (res.ok) {
         const data = await res.json()
         setBlog(data)
@@ -78,7 +78,7 @@ export default function ViewBlogPage() {
                 onClick={async () => {
                   if (confirm("Are you sure you want to approve this blog?")) {
                     try {
-                      const res = await fetch(`http://localhost:3003/blogs/${blog._id}`, {
+                      const res = await fetch(`https://consoleapis-qqtlx.ondigitalocean.app/blogs/${blog._id}`, {
                         method: "PUT",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ ...blog, status: "APPROVED" })

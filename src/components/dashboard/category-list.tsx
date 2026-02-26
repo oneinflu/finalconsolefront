@@ -42,7 +42,7 @@ export function CategoryList() {
 
   const fetchCategories = async () => {
     try {
-      const res = await fetch("http://localhost:3003/categories")
+      const res = await fetch("https://consoleapis-qqtlx.ondigitalocean.app/categories")
       if (res.ok) {
         const data = await res.json()
         setCategories(data)
@@ -68,7 +68,7 @@ export function CategoryList() {
     if (!confirm("Are you sure you want to delete this category?")) return
 
     try {
-      const res = await fetch(`http://localhost:3003/categories/${id}`, {
+      const res = await fetch(`https://consoleapis-qqtlx.ondigitalocean.app/categories/${id}`, {
         method: "DELETE"
       })
 

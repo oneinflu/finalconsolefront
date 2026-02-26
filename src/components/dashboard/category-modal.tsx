@@ -69,8 +69,8 @@ export function CategoryModal({
 
     try {
       const url = categoryToEdit 
-        ? `http://localhost:3003/categories/${categoryToEdit._id}`
-        : "http://localhost:3003/categories"
+        ? `https://consoleapis-qqtlx.ondigitalocean.app/categories/${categoryToEdit._id}`
+        : "https://consoleapis-qqtlx.ondigitalocean.app/categories"
       
       const method = categoryToEdit ? "PUT" : "POST"
 

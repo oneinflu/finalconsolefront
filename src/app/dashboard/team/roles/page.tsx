@@ -33,7 +33,7 @@ export default function RolesPage() {
   useEffect(() => {
     const fetchRoles = async () => {
       try {
-        const res = await fetch("http://localhost:3003/team/roles")
+        const res = await fetch("https://consoleapis-qqtlx.ondigitalocean.app/team/roles")
         if (!res.ok) throw new Error("Failed to fetch roles")
         const data = await res.json()
         setRoles(data)

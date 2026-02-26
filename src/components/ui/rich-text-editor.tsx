@@ -72,7 +72,7 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
       formData.append("file", file)
 
       try {
-        const res = await fetch("http://localhost:3003/upload", {
+        const res = await fetch("https://consoleapis-qqtlx.ondigitalocean.app/upload", {
           method: "POST",
           body: formData,
         })

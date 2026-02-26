@@ -66,7 +66,7 @@ export default function BlogsPage() {
           }
         }
 
-        const res = await fetch(`http://localhost:3003/blogs${queryParams}`)
+        const res = await fetch(`https://consoleapis-qqtlx.ondigitalocean.app/blogs${queryParams}`)
         if (!res.ok) throw new Error("Failed to fetch blogs")
         const data = await res.json()
         setBlogs(data.data)
@@ -85,7 +85,7 @@ export default function BlogsPage() {
     if (!confirm("Are you sure you want to delete this blog?")) return
 
     try {
-      const res = await fetch(`http://localhost:3003/blogs/${id}`, {
+      const res = await fetch(`https://consoleapis-qqtlx.ondigitalocean.app/blogs/${id}`, {
         method: "DELETE"
       })
       

@@ -46,7 +46,7 @@ export function BlogForm({ initialData, isEditing = false }: BlogFormProps) {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await fetch("http://localhost:3003/categories")
+        const res = await fetch("https://consoleapis-qqtlx.ondigitalocean.app/categories")
         if (res.ok) {
           const data = await res.json()
           setCategories(data)
@@ -120,8 +120,8 @@ export function BlogForm({ initialData, isEditing = false }: BlogFormProps) {
 
     try {
       const url = isEditing 
-        ? `http://localhost:3003/blogs/${initialData._id}` // Update URL (needs PUT endpoint)
-        : "http://localhost:3003/blogs"
+        ? `https://consoleapis-qqtlx.ondigitalocean.app/blogs/${initialData._id}` // Update URL (needs PUT endpoint)
+        : "https://consoleapis-qqtlx.ondigitalocean.app/blogs"
 
       const method = isEditing ? "PUT" : "POST"
 
@@ -339,7 +339,7 @@ export function BlogForm({ initialData, isEditing = false }: BlogFormProps) {
                         formData.append("file", file)
 
                         try {
-                          const res = await fetch("http://localhost:3003/upload", {
+                          const res = await fetch("https://consoleapis-qqtlx.ondigitalocean.app/upload", {
                             method: "POST",
                             body: formData,
                           })

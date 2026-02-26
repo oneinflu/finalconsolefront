@@ -19,7 +19,7 @@ export default function EditBlogPage() {
 
   const fetchBlogData = async (blogId: string) => {
     try {
-      const res = await fetch(`http://localhost:3003/blogs/${blogId}`)
+      const res = await fetch(`https://consoleapis-qqtlx.ondigitalocean.app/blogs/${blogId}`)
       if (res.ok) {
         const data = await res.json()
         

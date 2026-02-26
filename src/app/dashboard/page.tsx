@@ -71,14 +71,20 @@ interface RecentBlog {
   votes: number
   image?: string
   approvedOn?: string | null
+  createdAt?: string
 }
 
 export default function DashboardPage() {
   const router = useRouter()
   const [stats, setStats] = useState<DashboardStats | null>(null)
-  const [recentBlogs, setRecentBlogs] = useState<RecentBlog[]>([])
+  const [allBlogs, setAllBlogs] = useState<RecentBlog[]>([])
   const [loading, setLoading] = useState(true)
   const [user, setUser] = useState<any>(null)
+  
+  // Pagination and Filter State
+  const [currentPage, setCurrentPage] = useState(1)
+  const [statusFilter, setStatusFilter] = useState<string>("APPROVED")
+  const itemsPerPage = 5
 
   useEffect(() => {
     const fetchData = async () => {
@@ -101,11 +107,12 @@ export default function DashboardPage() {
           setStats(statsData)
         }
 
-        // Fetch Recent Blogs (using queryParams for role filtering)
-        const blogsRes = await fetch(`https://consoleapis-qqtlx.ondigitalocean.app/dashboard/recent-blogs${queryParams}`)
+        // Fetch All Blogs for client-side filtering and pagination
+        // Using a high limit to get all recent blogs
+        const blogsRes = await fetch(`https://consoleapis-qqtlx.ondigitalocean.app/blogs${queryParams ? queryParams + '&' : '?'}limit=1000`)
         if (blogsRes.ok) {
           const blogsData = await blogsRes.json()
-          setRecentBlogs(blogsData)
+          setAllBlogs(blogsData.data || [])
         }
       } catch (error) {
         console.error("Failed to fetch dashboard data", error)
@@ -116,6 +123,31 @@ export default function DashboardPage() {
 
     fetchData()
   }, [])
+
+  // Filter and Paginate Blogs
+  const filteredBlogs = allBlogs.filter(blog => {
+    // 1. Filter by Status
+    if (statusFilter !== "ALL" && blog.status !== statusFilter) return false;
+    
+    // 2. Filter by Date (Last 7 Days)
+    // Use createdAt if available, otherwise fallback to date or assume recent
+    const blogDate = blog.createdAt ? new Date(blog.createdAt) : new Date(blog.date);
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    
+    // Reset time part for accurate date comparison if needed, or just compare timestamps
+    return blogDate >= sevenDaysAgo;
+  });
+
+  const totalPages = Math.ceil(filteredBlogs.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedBlogs = filteredBlogs.slice(startIndex, startIndex + itemsPerPage);
+
+  const handlePageChange = (newPage: number) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+    }
+  };
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/20 p-4 md:p-8">
@@ -233,14 +265,34 @@ export default function DashboardPage() {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>Filter by</DropdownMenuLabel>
+                    <DropdownMenuLabel>Filter by Status</DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuCheckboxItem checked>
-                      Active
+                    <DropdownMenuCheckboxItem 
+                      checked={statusFilter === "APPROVED"} 
+                      onCheckedChange={() => {
+                        setStatusFilter("APPROVED");
+                        setCurrentPage(1);
+                      }}
+                    >
+                      Approved
                     </DropdownMenuCheckboxItem>
-                    <DropdownMenuCheckboxItem>Draft</DropdownMenuCheckboxItem>
-                    <DropdownMenuCheckboxItem>
-                      Archived
+                    <DropdownMenuCheckboxItem 
+                      checked={statusFilter === "DRAFT"} 
+                      onCheckedChange={() => {
+                        setStatusFilter("DRAFT");
+                        setCurrentPage(1);
+                      }}
+                    >
+                      Draft
+                    </DropdownMenuCheckboxItem>
+                    <DropdownMenuCheckboxItem 
+                      checked={statusFilter === "ALL"} 
+                      onCheckedChange={() => {
+                        setStatusFilter("ALL");
+                        setCurrentPage(1);
+                      }}
+                    >
+                      All
                     </DropdownMenuCheckboxItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -271,14 +323,14 @@ export default function DashboardPage() {
                         Loading recent blogs...
                       </TableCell>
                     </TableRow>
-                  ) : recentBlogs.length === 0 ? (
+                  ) : filteredBlogs.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={6} className="h-24 text-center">
-                        No blogs found.
+                        No blogs found within the last 7 days with status {statusFilter}.
                       </TableCell>
                     </TableRow>
                   ) : (
-                    recentBlogs.map((blog) => (
+                    paginatedBlogs.map((blog) => (
                       <TableRow key={blog._id} className="hover:bg-muted/50 transition-colors">
                         <TableCell className="hidden sm:table-cell">
                           <div className="h-12 w-12 rounded-md bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-xs overflow-hidden">
@@ -301,15 +353,44 @@ export default function DashboardPage() {
                           </Badge>
                         </TableCell>
                         <TableCell className="hidden md:table-cell text-muted-foreground">
-                          {blog.date ? format(new Date(blog.date), "MMM d, yyyy") : "N/A"}
+                          {format(new Date(blog.createdAt || blog.date), "MMM d, yyyy")}
                         </TableCell>
-                        <TableCell className="text-right font-medium">{blog.votes || 0}</TableCell>
+                        <TableCell className="text-right font-medium">
+                          {blog.votes?.toLocaleString() || 0}
+                        </TableCell>
                       </TableRow>
                     ))
                   )}
                 </TableBody>
               </Table>
             </div>
+            
+            {/* Pagination Controls */}
+            {!loading && filteredBlogs.length > 0 && (
+              <div className="flex items-center justify-end space-x-2 py-4">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                >
+                  <ChevronLeft className="h-4 w-4 mr-1" />
+                  Previous
+                </Button>
+                <div className="text-sm font-medium">
+                  Page {currentPage} of {totalPages}
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                >
+                  Next
+                  <ChevronRight className="h-4 w-4 ml-1" />
+                </Button>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>

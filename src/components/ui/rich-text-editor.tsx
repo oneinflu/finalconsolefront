@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/popover"
 import { Input } from '@/components/ui/input'
 import { useState } from 'react'
+import { getBaseUrl } from "@/lib/api-config"
 
 interface RichTextEditorProps {
   value: string
@@ -53,7 +54,7 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
     content: value,
     editorProps: {
       attributes: {
-        class: "min-h-[150px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 prose prose-sm max-w-none dark:prose-invert [&_table]:border-collapse [&_table]:border [&_td]:border [&_td]:p-2 [&_th]:border [&_th]:p-2 [&_th]:bg-muted/50 [&_img]:max-w-full [&_img]:rounded-md",
+        class: "min-h-[150px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 prose max-w-none dark:prose-invert",
       },
     },
     onUpdate: ({ editor }) => {
@@ -72,7 +73,8 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
       formData.append("file", file)
 
       try {
-        const res = await fetch("https://consoleapis-qqtlx.ondigitalocean.app/upload", {
+        const baseUrl = getBaseUrl()
+        const res = await fetch(`${baseUrl}/upload`, {
           method: "POST",
           body: formData,
         })

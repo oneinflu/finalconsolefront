@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { getBaseUrl } from "@/lib/api-config"
 import {
   Card,
   CardContent,
@@ -38,7 +39,8 @@ export default function UsersPage() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const res = await fetch("https://consoleapis-qqtlx.ondigitalocean.app/team/users")
+        const baseUrl = getBaseUrl()
+        const res = await fetch(`${baseUrl}/team/users`)
         if (!res.ok) throw new Error("Failed to fetch users")
         const data = await res.json()
         setUsers(data)

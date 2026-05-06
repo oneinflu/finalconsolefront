@@ -47,6 +47,7 @@ import {
 } from "lucide-react"
 import { BlogStatusBadge } from "@/components/dashboard/blog-status-badge"
 import { format } from "date-fns"
+import { getBaseUrl } from "@/lib/api-config"
 
 interface DashboardStats {
   totalUsers: number
@@ -101,7 +102,8 @@ export default function DashboardPage() {
         }
 
         // Fetch Stats
-        const statsRes = await fetch(`https://consoleapis-qqtlx.ondigitalocean.app/dashboard/stats${queryParams}`)
+        const baseUrl = getBaseUrl()
+        const statsRes = await fetch(`${baseUrl}/dashboard/stats${queryParams}`)
         if (statsRes.ok) {
           const statsData = await statsRes.json()
           setStats(statsData)
@@ -109,7 +111,7 @@ export default function DashboardPage() {
 
         // Fetch All Blogs for client-side filtering and pagination
         // Using a high limit to get all recent blogs
-        const blogsRes = await fetch(`https://consoleapis-qqtlx.ondigitalocean.app/blogs${queryParams ? queryParams + '&' : '?'}limit=1000`)
+        const blogsRes = await fetch(`${baseUrl}/blogs${queryParams ? queryParams + '&' : '?'}limit=1000`)
         if (blogsRes.ok) {
           const blogsData = await blogsRes.json()
           setAllBlogs(blogsData.data || [])

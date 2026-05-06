@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ArrowLeft, Edit, Calendar, User } from "lucide-react"
 import { format } from "date-fns"
+import { getBaseUrl } from "@/lib/api-config"
 
 export default function ViewBlogPage() {
   const { id } = useParams()
@@ -32,7 +33,8 @@ export default function ViewBlogPage() {
 
   const fetchBlogData = async (blogId: string) => {
     try {
-      const res = await fetch(`https://consoleapis-qqtlx.ondigitalocean.app/blogs/${blogId}`)
+      const baseUrl = getBaseUrl()
+      const res = await fetch(`${baseUrl}/blogs/${blogId}`)
       if (res.ok) {
         const data = await res.json()
         setBlog(data)
@@ -78,7 +80,8 @@ export default function ViewBlogPage() {
                 onClick={async () => {
                   if (confirm("Are you sure you want to approve this blog?")) {
                     try {
-                      const res = await fetch(`https://consoleapis-qqtlx.ondigitalocean.app/blogs/${blog._id}`, {
+                      const baseUrl = getBaseUrl()
+                      const res = await fetch(`${baseUrl}/blogs/${blog._id}`, {
                         method: "PUT",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ ...blog, status: "APPROVED" })

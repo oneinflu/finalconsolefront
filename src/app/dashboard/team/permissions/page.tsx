@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { getBaseUrl } from "@/lib/api-config"
 import {
   Card,
   CardContent,
@@ -33,7 +34,8 @@ export default function PermissionsPage() {
   useEffect(() => {
     const fetchPermissions = async () => {
       try {
-        const res = await fetch("https://consoleapis-qqtlx.ondigitalocean.app/team/permissions")
+        const baseUrl = getBaseUrl()
+        const res = await fetch(`${baseUrl}/team/permissions`)
         if (!res.ok) throw new Error("Failed to fetch permissions")
         const data = await res.json()
         setPermissions(data)

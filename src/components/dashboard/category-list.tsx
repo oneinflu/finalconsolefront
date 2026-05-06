@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { getBaseUrl } from "@/lib/api-config"
 import {
   Card,
   CardContent,
@@ -42,7 +43,8 @@ export function CategoryList() {
 
   const fetchCategories = async () => {
     try {
-      const res = await fetch("https://consoleapis-qqtlx.ondigitalocean.app/categories")
+      const baseUrl = getBaseUrl()
+      const res = await fetch(`${baseUrl}/categories`)
       if (res.ok) {
         const data = await res.json()
         setCategories(data)
@@ -68,7 +70,8 @@ export function CategoryList() {
     if (!confirm("Are you sure you want to delete this category?")) return
 
     try {
-      const res = await fetch(`https://consoleapis-qqtlx.ondigitalocean.app/categories/${id}`, {
+      const baseUrl = getBaseUrl()
+      const res = await fetch(`${baseUrl}/categories/${id}`, {
         method: "DELETE"
       })
 

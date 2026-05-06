@@ -5,6 +5,7 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
+import { getBaseUrl } from "@/lib/api-config"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -23,7 +24,8 @@ export default function LoginPage() {
     setLoading(true)
 
     try {
-      const res = await fetch("https://consoleapis-qqtlx.ondigitalocean.app/auth/login", {
+      const baseUrl = getBaseUrl()
+      const res = await fetch(`${baseUrl}/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

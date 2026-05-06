@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { getBaseUrl } from "@/lib/api-config"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -68,9 +69,10 @@ export function CategoryModal({
     }
 
     try {
+      const baseUrl = getBaseUrl()
       const url = categoryToEdit 
-        ? `https://consoleapis-qqtlx.ondigitalocean.app/categories/${categoryToEdit._id}`
-        : "https://consoleapis-qqtlx.ondigitalocean.app/categories"
+        ? `${baseUrl}/categories/${categoryToEdit._id}`
+        : `${baseUrl}/categories`
       
       const method = categoryToEdit ? "PUT" : "POST"
 

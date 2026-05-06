@@ -14,6 +14,7 @@ import { cn } from "@/lib/utils"
 import { useRouter } from "next/navigation"
 import { RichTextEditor } from "@/components/ui/rich-text-editor"
 import { useEffect } from "react"
+import { getBaseUrl } from "@/lib/api-config"
 
 interface BlogFormProps {
   initialData?: any
@@ -46,7 +47,8 @@ export function BlogForm({ initialData, isEditing = false }: BlogFormProps) {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await fetch("https://consoleapis-qqtlx.ondigitalocean.app/categories")
+        const baseUrl = getBaseUrl()
+        const res = await fetch(`${baseUrl}/categories`)
         if (res.ok) {
           const data = await res.json()
           setCategories(data)
@@ -119,10 +121,12 @@ export function BlogForm({ initialData, isEditing = false }: BlogFormProps) {
     }
 
     try {
+      const baseUrl = getBaseUrl()
       const url = isEditing 
-        ? `https://consoleapis-qqtlx.ondigitalocean.app/blogs/${initialData._id}` // Update URL (needs PUT endpoint)
-        : "https://consoleapis-qqtlx.ondigitalocean.app/blogs"
+        ? `${baseUrl}/blogs/${initialData._id}` // Update URL (needs PUT endpoint)
+        : `${baseUrl}/blogs`
 
+      console.log(`Saving blog to: ${url}`)
       const method = isEditing ? "PUT" : "POST"
 
       const res = await fetch(url, {
@@ -339,7 +343,8 @@ export function BlogForm({ initialData, isEditing = false }: BlogFormProps) {
                         formData.append("file", file)
 
                         try {
-                          const res = await fetch("https://consoleapis-qqtlx.ondigitalocean.app/upload", {
+                          const baseUrl = getBaseUrl()
+                          const res = await fetch(`${baseUrl}/upload`, {
                             method: "POST",
                             body: formData,
                           })

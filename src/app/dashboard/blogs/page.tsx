@@ -22,6 +22,7 @@ import { FileText, ChevronLeft, ChevronRight, Eye, Edit, Trash2 } from "lucide-r
 import { BlogStatusBadge } from "@/components/dashboard/blog-status-badge"
 import { format } from "date-fns"
 import { useRouter } from "next/navigation"
+import { getBaseUrl } from "@/lib/api-config"
 
 interface Blog {
   _id: string
@@ -66,7 +67,8 @@ export default function BlogsPage() {
           }
         }
 
-        const res = await fetch(`https://consoleapis-qqtlx.ondigitalocean.app/blogs${queryParams}`)
+        const baseUrl = getBaseUrl()
+        const res = await fetch(`${baseUrl}/blogs${queryParams}`)
         if (!res.ok) throw new Error("Failed to fetch blogs")
         const data = await res.json()
         setBlogs(data.data)
@@ -85,7 +87,8 @@ export default function BlogsPage() {
     if (!confirm("Are you sure you want to delete this blog?")) return
 
     try {
-      const res = await fetch(`https://consoleapis-qqtlx.ondigitalocean.app/blogs/${id}`, {
+      const baseUrl = getBaseUrl()
+      const res = await fetch(`${baseUrl}/blogs/${id}`, {
         method: "DELETE"
       })
       

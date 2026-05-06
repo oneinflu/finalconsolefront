@@ -5,6 +5,8 @@ import { BlogForm } from "@/components/dashboard/blog-form"
 import { useParams } from "next/navigation"
 import { useEffect, useState } from "react"
 
+import { getBaseUrl } from "@/lib/api-config"
+
 export default function EditBlogPage() {
   const params = useParams()
   const id = params?.id as string
@@ -19,18 +21,25 @@ export default function EditBlogPage() {
 
   const fetchBlogData = async (blogId: string) => {
     try {
-      const res = await fetch(`https://consoleapis-qqtlx.ondigitalocean.app/blogs/${blogId}`)
+      const baseUrl = getBaseUrl()
+      const res = await fetch(`${baseUrl}/blogs/${blogId}`)
       if (res.ok) {
         const data = await res.json()
         
         // Transform data to match form expectations
         const formattedData = {
           ...data,
-          categoryId: { _id: data.categoryId }, // Form expects object with _id
-          sections: data.sections.map((s: any) => ({
-            title: s.section,
-            content: s.content,
-            cta: s.cta === "yes"
+          // Ensure categoryId is in the format { _id: "..." }
+          categoryId: data.categoryId?._id ? data.categoryId : { _id: data.categoryId },
+          sections: (data.sections || []).map((s: any) => ({
+            title: s.section || s.title || "",
+            content: s.content || "",
+            cta: s.cta === "yes" || s.cta === true
+          })),
+          // Ensure faqs are present and correctly formatted
+          faqs: (data.faqs || []).map((f: any) => ({
+            question: f.question || "",
+            answer: f.answer || ""
           }))
         }
         

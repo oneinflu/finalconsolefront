@@ -28,9 +28,10 @@ interface RichTextEditorProps {
   value: string
   onChange: (value: string) => void
   placeholder?: string
+  showPlaceholders?: boolean
 }
 
-export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorProps) {
+export function RichTextEditor({ value, onChange, placeholder, showPlaceholders = false }: RichTextEditorProps) {
   const [imageUrl, setImageUrl] = useState("")
 
   const editor = useEditor({
@@ -189,6 +190,30 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
             >
               <Trash2 className="h-4 w-4" />
             </Toggle>
+          </>
+        )}
+
+        {showPlaceholders && (
+          <>
+            <div className="w-px h-6 bg-border mx-1" />
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => editor.chain().focus().insertContent('[course]').run()}
+              className="h-8 px-2 text-xs font-mono font-bold bg-amber-50 text-amber-700 hover:bg-amber-100 border-amber-200"
+            >
+              [course]
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => editor.chain().focus().insertContent('[location]').run()}
+              className="h-8 px-2 text-xs font-mono font-bold bg-blue-50 text-blue-700 hover:bg-blue-100 border-blue-200"
+            >
+              [location]
+            </Button>
           </>
         )}
       </div>

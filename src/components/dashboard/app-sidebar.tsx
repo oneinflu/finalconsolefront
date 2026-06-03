@@ -16,7 +16,8 @@ import {
   LayoutDashboard,
   FileText,
   ShieldCheck,
-  UserCog
+  UserCog,
+  Globe
 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
@@ -98,6 +99,21 @@ const data = {
         {
           title: "All Blogs",
           url: "/dashboard/blogs",
+        },
+      ],
+    },
+    {
+      title: "SEO Management",
+      url: "#",
+      icon: Globe,
+      items: [
+        {
+          title: "Locations",
+          url: "/dashboard/seo/locations",
+        },
+        {
+          title: "Web Pages",
+          url: "/dashboard/seo/web-pages",
         },
       ],
     },

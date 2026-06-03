@@ -51,12 +51,6 @@ export function WebPagesList() {
   const [counts, setCounts] = useState<Record<string, number>>({})
   const [loading, setLoading] = useState(true)
 
-  // View pages states
-  const [isViewPagesOpen, setIsViewPagesOpen] = useState(false)
-  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null)
-  const [selectedCategoryPages, setSelectedCategoryPages] = useState<WebPage[]>([])
-  const [loadingPages, setLoadingPages] = useState(false)
-
   useEffect(() => {
     fetchInitialData()
   }, [])
@@ -112,47 +106,6 @@ export function WebPagesList() {
     } catch (error) {
       console.error("Error generating pages:", error)
       alert("Error generating pages")
-    }
-  }
-
-  // Open "View Web Pages" Dialog
-  const handleViewPages = async (category: Category) => {
-    setSelectedCategory(category)
-    setIsViewPagesOpen(true)
-    setLoadingPages(true)
-    try {
-      const baseUrl = getBaseUrl()
-      const res = await fetch(`${baseUrl}/web-pages?categoryId=${category._id}`)
-      if (res.ok) {
-        const data = await res.json()
-        setSelectedCategoryPages(data)
-      }
-    } catch (err) {
-      console.error("Error fetching pages for category", err)
-    } finally {
-      setLoadingPages(false)
-    }
-  }
-
-  // Delete page
-  const handleDeletePage = async (pageId: string) => {
-    if (!confirm("Are you sure you want to delete this web page?")) return
-    try {
-      const baseUrl = getBaseUrl()
-      const res = await fetch(`${baseUrl}/web-pages/${pageId}`, {
-        method: "DELETE"
-      })
-      if (res.ok) {
-        setSelectedCategoryPages(prev => prev.filter(p => p._id !== pageId))
-        // Refresh counts
-        const countsRes = await fetch(`${baseUrl}/web-pages/counts`)
-        if (countsRes.ok) {
-          const countsData = await countsRes.json()
-          setCounts(countsData)
-        }
-      }
-    } catch (err) {
-      console.error(err)
     }
   }
 
@@ -235,7 +188,7 @@ export function WebPagesList() {
                               variant="default"
                               size="sm"
                               disabled={count === 0}
-                              onClick={() => handleViewPages(category)}
+                              onClick={() => router.push(`/dashboard/seo/web-pages/view?categoryId=${category._id}`)}
                               className="bg-primary hover:bg-primary/95"
                             >
                               <Eye className="mr-1 h-3.5 w-3.5" /> View Web Pages
@@ -252,65 +205,6 @@ export function WebPagesList() {
         </CardContent>
       </Card>
 
-      {/* Dialog for View Generated Web Pages */}
-      <Dialog open={isViewPagesOpen} onOpenChange={setIsViewPagesOpen}>
-        <DialogContent className="sm:max-w-[700px] max-h-[85vh] flex flex-col">
-          <DialogHeader>
-            <DialogTitle>Generated Web Pages for {selectedCategory?.name}</DialogTitle>
-            <DialogDescription>
-              List of generated routes and target page items for this course category.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="flex-1 overflow-y-auto my-4 max-h-[50vh] pr-1">
-            {loadingPages ? (
-              <p className="text-center py-8 text-muted-foreground">Loading web pages list...</p>
-            ) : selectedCategoryPages.length === 0 ? (
-              <p className="text-center py-8 text-muted-foreground">No pages generated for this course yet.</p>
-            ) : (
-              <div className="rounded-md border overflow-hidden">
-                <Table>
-                  <TableHeader className="bg-muted/30">
-                    <TableRow>
-                      <TableHead>Target Page Link</TableHead>
-                      <TableHead>URL Slug</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {selectedCategoryPages.map((page) => (
-                      <TableRow key={page._id} className="hover:bg-muted/20">
-                        <TableCell className="font-medium flex items-center gap-2">
-                          <FileText className="h-4 w-4 text-muted-foreground shrink-0" />
-                          <span>{page.title}</span>
-                        </TableCell>
-                        <TableCell className="font-mono text-xs text-muted-foreground">
-                          /{page.slug}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleDeletePage(page._id)}
-                            className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                            <span className="sr-only">Delete</span>
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            )}
-          </div>
-          <DialogFooter className="shrink-0">
-            <Button variant="outline" onClick={() => setIsViewPagesOpen(false)}>
-              Close
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </>
   )
 }
